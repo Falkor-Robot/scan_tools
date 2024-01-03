@@ -35,14 +35,12 @@
  *  on Robotics and Automation (ICRA), 2008
  */
 
-#include <laser_scan_matcher/laser_scan_matcher.h>
+#include <laser_scan_matcher/laser_scan_matcher.hpp>
 
-int main(int argc, char** argv)
+int main(int argc, char * argv[])
 {
-  ros::init(argc, argv, "LaserScanMatcher");
-  ros::NodeHandle nh;
-  ros::NodeHandle nh_private("~");
-  scan_tools::LaserScanMatcher laser_scan_matcher(nh, nh_private);
-  ros::spin();
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<scan_tools::LaserScanMatcher>());
+  rclcpp::shutdown();
   return 0;
 }

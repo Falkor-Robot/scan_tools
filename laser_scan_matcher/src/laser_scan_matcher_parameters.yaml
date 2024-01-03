@@ -1,0 +1,416 @@
+laser_scan_matcher:
+  base_frame: {
+    type: string,
+    default_value: "base_link",
+    description: "",
+    validation: {
+      not_empty<>: null
+    }
+  }
+  fixed_frame: {
+    type: string,
+    default_value: "map",
+    description: "",
+    validation: {
+      not_empty<>: null
+    }
+  }
+  use_cloud_input: {
+    type: bool,
+    default_value: false,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  cloud_topic_name: {
+    type: string,
+    default_value: "/cloud",
+    description: "",
+    validation: {
+      not_empty<>: null
+    }
+  }
+  scan_topic_name: {
+    type: string,
+    default_value: "/scan",
+    description: "",
+    validation: {
+      not_empty<>: null
+    }
+  }
+  cloud_range_min: {
+    type: double,
+    default_value: 0.1,
+    description: "",
+    validation: {
+      gt_eq<>: 0.0
+    }
+  }
+  cloud_range_max: {
+    type: double,
+    default_value: 50.0,
+    description: "",
+    validation: {
+      gt_eq<>: 0.0
+    }
+  }
+  cloud_res: {
+    type: double,
+    default_value: 0.05,
+    description: "",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  kf_dist_linear: {
+    type: double,
+    default_value: 0.1,
+    description: "",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  kf_dist_angular: {
+    type: double,
+    default_value: 0.0,
+    description: "",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  use_imu: {
+    type: bool,
+    default_value: true,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  imu_topic_name: {
+    type: string,
+    default_value: "/imu/data",
+    description: "",
+    validation: {
+      not_empty<>: null
+    }
+  }
+  use_odom: {
+    type: bool,
+    default_value: true,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  odom_topic_name: {
+    type: string,
+    default_value: "/odom",
+    description: "",
+    validation: {
+      not_empty<>: null
+    }
+  }
+  use_vel: {
+    type: bool,
+    default_value: false,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  stamped_vel: {
+    type: bool,
+    default_value: false,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  vel_topic_name: {
+    type: string,
+    default_value: "/vel",
+    description: "",
+    validation: {
+      not_empty<>: null
+    }
+  }
+  publish_tf: {
+    type: bool,
+    default_value: true,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  publish_pose: {
+    type: bool,
+    default_value: true,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  publish_pose_stamped: {
+    type: bool,
+    default_value: false,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  publish_pose_with_covariance: {
+    type: bool,
+    default_value: false,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  publish_pose_with_covariance_stamped: {
+    type: bool,
+    default_value: false,
+    description: "",
+    #validation: {
+    #  not_empty<>: null
+    #}
+  }
+  position_covariance: {
+    type: double_array,
+    default_value: [ 0.000000001, 0.000000001, 0.000000001 ],
+    description: "1e-9 default",
+    validation: {
+      fixed_size<>: 3,
+      not_empty<>: null
+    }
+  } 
+  orientation_covariance: {
+    type: double_array,
+    default_value:  [ 0.000000001, 0.000000001, 0.000000001],
+    description: "1e-9 default",
+    validation: {
+      fixed_size<>: 3,
+      not_empty<>: null
+    }
+  } 
+  max_angular_correction_deg: {
+    type: double,
+    default_value: 45.0,
+    description: " Maximum angular displacement between scans (degree)",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  max_linear_correction: {
+    type: double,
+    default_value: 0.5,
+    description: "Maximum translation between scans (m)",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  max_iterations:  {
+    type: int,
+    default_value: 10,
+    description: "Maximum ICP cycle iterations",
+    validation: {
+      gt_eq<>: 0
+    }    
+  }
+  epsilon_xy: {
+    type: double,
+    default_value: 0.000001,
+    description: "A threshold for stopping (m)",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  epsilon_theta: {
+    type: double,
+    default_value: 0.000001,
+    description: "A threshold for stopping (rad)",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  max_correspondence_dist: {
+    type: double,
+    default_value: 0.3,
+    description: "Maximum distance for a correspondence to be valid",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  sigma: {
+    type: double,
+    default_value: 0.010,
+    description: "Noise in the scan (m)",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  use_corr_tricks: {
+    type: int,
+    default_value: 1,
+    description: "Use smart tricks for finding correspondences.",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  restart: {
+    type: int,
+    default_value: 0,
+    description: "Restart: Restart if error is over threshold",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  restart_threshold_mean_error: {
+    type: double,
+    default_value: 0.010,
+    description: "Restart: Threshold for restarting",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  restart_dt: {
+    type: double,
+    default_value: 1.0,
+    description: "Restart: displacement for restarting. (m)",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  restart_dtheta: {
+    type: double,
+    default_value: 0.1,
+    description: "Restart: displacement for restarting. (rad)",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  clustering_threshold: {
+    type: double,
+    default_value: 0.25,
+    description: "Max distance for staying in the same clustering",
+    validation: {
+      gt_eq<>: 0.0
+    }    
+  }
+  orientation_neighbourhood: {
+    type: int,
+    default_value: 20,
+    description: "Number of neighbour rays used to estimate the orientation",
+    validation: {
+      gt_eq<>: 0
+    }    
+  }
+  use_point_to_line_distance: {
+    type: int,
+    default_value: 1,
+    description: "If 0, it's vanilla ICP",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  do_alpha_test: {
+    type: int,
+    default_value: 0,
+    description: "Discard correspondences based on the angles",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  do_alpha_test_thresholdDeg: {
+    type: double,
+    default_value: 20.0,
+    description: "Discard correspondences based on the angles - threshold angle, in degrees",
+    validation: {
+      gt_eq<>: 0
+    }    
+  }
+  outliers_maxPerc: {
+    type: double,
+    default_value: 0.9,
+    description: "Percentage of correspondences to consider: if 0.9,
+                  always discard the top 10% of correspondences with more error",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  outliers_adaptive_order:  {
+    type: double,
+    default_value: 0.7,
+    description: "Parameters describing a simple adaptive algorithm for discarding.
+                  1) Order the errors.
+                  2) Choose the percentile according to outliers_adaptive_order.
+                     (if it is 0.7, get the 70% percentile)
+                  3) Define an adaptive threshold multiplying outliers_adaptive_mult
+                     with the value of the error at the chosen percentile.
+                  4) Discard correspondences over the threshold.
+                  This is useful to be conservative; yet remove the biggest errors.",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  outliers_adaptive_mult: {
+    type: double,
+    default_value: 2.0,
+    description: "",
+    validation: {
+      gt_eq<>: 0
+    }    
+  }
+  do_visibility_test: {
+    type: int,
+    default_value: 0,
+    description: "If you already have a guess of the solution, you can compute the polar angle
+                  of the points of one scan in the new position. If the polar angle is not a monotone
+                  function of the readings index, it means that the surface is not visible in the
+                  next position. If it is not visible, then we don't use it for matching.",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  outliers_remove_doubles: {
+    type: int,
+    default_value: 1,
+    description: "no two points in laser_sens can have the same corr.",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  do_compute_covariance: {
+    type: int,
+    default_value: 0,
+    description: "If 1, computes the covariance of ICP using the method http://purl.org/censi/2006/icpcov",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  debug_verify_tricks: {
+    type: int,
+    default_value: 0,
+    description: "Checks that find_correspondences_tricks gives the right answer",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  use_ml_weights: {
+    type: int,
+    default_value: 0,
+    description: "If 1, the field 'true_alpha' (or 'alpha') in the first scan is used to compute the
+                  incidence beta, and the factor (1/cos^2(beta)) used to weight the correspondence.",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
+  use_sigma_weights: {
+    type: int,
+    default_value: 0,
+    description: "If 1, the field 'readings_sigma' in the second scan is used to weight the
+                  correspondence by 1/sigma^2",
+    validation: {
+      bounds<>: [0,1]
+    }    
+  }
