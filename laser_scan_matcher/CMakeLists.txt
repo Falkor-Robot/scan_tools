@@ -104,12 +104,12 @@ ament_target_dependencies( laser_scan_matcher
 add_executable(laser_scan_matcher_node src/laser_scan_matcher_node.cpp)
 target_link_libraries( laser_scan_matcher_node laser_scan_matcher )
 
-#Install library
-#install(TARGETS laser_scan_matcher laser_scan_matcher_nodelet
-#    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-#
+install(DIRECTORY
+  launch
+  params
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 #Install library includes
 install(
     DIRECTORY include/laser_scan_matcher/
@@ -121,9 +121,6 @@ ament_export_include_directories(include)
 install(TARGETS laser_scan_matcher_node
     DESTINATION lib/${PROJECT_NAME} )
 
-#Install nodelet description
-install(FILES laser_scan_matcher_nodelet.xml
-    DESTINATION share/${PROJECT_NAME} )
 
 #Install demo files
 install(DIRECTORY demo

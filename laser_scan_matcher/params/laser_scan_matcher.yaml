@@ -1,0 +1,21 @@
+
+falkor_odom:
+  laser_scan_matcher:
+    ros__parameters:
+      base_frame: base_link
+      fixed_frame: map
+      use_cloud_input: false
+      cloud_topic_name: /prova
+      scan_topic_name: /falkor/scan
+      use_imu: true
+      imu_topic_name: /sensors/primary/imu/raw
+      use_odom: true
+      odom_topic_name: /velocity_controller/odom
+      use_vel: true
+      stamped_vel: false
+      vel_topic_name: /velocity_controller/cmd_vel_out
+      publish_tf: true
+      publish_pose: false
+      publish_pose_stamped: false
+      publish_pose_with_covariance: true
+      publish_pose_with_covariance_stamped: false
