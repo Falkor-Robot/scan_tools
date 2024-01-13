@@ -43,6 +43,8 @@
 #include <tf2_ros/buffer_interface.h>
 namespace scan_tools
 {
+// see e.g. https://stackoverflow.com/a/40691657
+constexpr std::chrono::duration<int64_t> LaserScanMatcher::DIAGNOSTICS_PERIOD;
 
 LaserScanMatcher::LaserScanMatcher()
 : Node("LaserScanMatcher")
@@ -50,6 +52,7 @@ LaserScanMatcher::LaserScanMatcher()
 , received_imu_(false)
 , received_odom_(false)
 , received_vel_(false)
+, last_loop_update_(rclcpp::Clock().now())
 {
   RCLCPP_INFO(this->get_logger(), "%s\n","Starting LaserScanMatcher");
   
@@ -157,6 +160,17 @@ LaserScanMatcher::LaserScanMatcher()
         , std::bind(&LaserScanMatcher::velCallback, this, std::placeholders::_1)
       );
   }
+
+  /// Diagnostics:
+  diagnostics_ = std::make_shared<diagnostics_type>(this);
+  status_ = std::make_shared<status_type>();
+  //status_->velocity_hs = velocity_hs_;
+  //status_->lock_hs = lock_hs_;
+
+  diagnostics_timer_ = this->create_wall_timer(
+    DIAGNOSTICS_PERIOD, [this]() -> void {
+      updateDiagnostics();
+    });
 }
 
 LaserScanMatcher::~LaserScanMatcher()
@@ -172,6 +186,16 @@ std::shared_ptr<rclcpp::Node> LaserScanMatcher::get_node() {
 //  const std::shared_ptr<rclcpp::Node> s(dynamic_cast<rclcpp::Node*>(this));
 //  return s;
 //}
+
+void LaserScanMatcher::updateDiagnostics()
+{
+  //status_->priority = getLockPriority();
+  status_-> scan_valid = output_.valid;
+  status_-> match_duration = last_duration_;
+  status_-> reading_age = reading_age_;
+  diagnostics_->updateStatus(status_);
+}
+
 
 void LaserScanMatcher::initParams()
 {
@@ -494,6 +518,8 @@ void LaserScanMatcher::scanCallback (const sensor_msgs::msg::LaserScan::SharedPt
 void LaserScanMatcher::processScan(LDP& curr_ldp_scan, const rclcpp::Time& time)
 {
   const auto start = std::chrono::system_clock::now();
+  reading_age_ = (time -last_loop_update_).seconds();
+  last_loop_update_ = time;
   // CSM is used in the following way:
   // The scans are always in the laser frame
   // The reference scan (prevLDPcan_) has a pose of [0, 0, 0]
@@ -697,8 +723,8 @@ void LaserScanMatcher::processScan(LDP& curr_ldp_scan, const rclcpp::Time& time)
 
   // **** statistics
   
-  double dur = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
-  RCLCPP_WARN(this->get_logger(), "Scan matcher total duration: %.1f ms", dur);
+  last_duration_ = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count();
+  RCLCPP_DEBUG(this->get_logger(), "Scan matcher total duration: %.1f ms", last_duration_);
 }
 
 bool LaserScanMatcher::newKeyframeNeeded(const tf2::Transform& d)

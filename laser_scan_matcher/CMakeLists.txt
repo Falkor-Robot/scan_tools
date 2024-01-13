@@ -1,24 +1,19 @@
 cmake_minimum_required(VERSION 3.5)
 project(laser_scan_matcher)
 
-# Default to C99
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
-endif()
-
 ## Default to C++14
-#if(NOT CMAKE_CXX_STANDARD)
-#  set(CMAKE_CXX_STANDARD 14)
-#endif()
-
-# Set minimum C++ standard to C++14
-if(NOT "${CMAKE_CXX_STANDARD_COMPUTED_DEFAULT}")
-  message(STATUS "Changing CXX_STANDARD from C++98 to C++14")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-elseif("${CMAKE_CXX_STANDARD_COMPUTED_DEFAULT}" STREQUAL "98")
-  message(STATUS "Changing CXX_STANDARD from C++98 to C++14")
+if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
+
+# Set minimum C++ standard to C++14
+#if(NOT "${CMAKE_CXX_STANDARD_COMPUTED_DEFAULT}")
+#  message(STATUS "Changing CXX_STANDARD from C++98 to C++14")
+#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+#elseif("${CMAKE_CXX_STANDARD_COMPUTED_DEFAULT}" STREQUAL "98")
+#  message(STATUS "Changing CXX_STANDARD from C++98 to C++14")
+#  set(CMAKE_CXX_STANDARD 14)
+#endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -28,7 +23,8 @@ endif()
 # List C++ dependencies on ros packages
 set( ROS_CXX_DEPENDENCIES
   rclcpp
-#  nodelet
+  diagnostic_updater
+  diagnostic_msgs
   sensor_msgs
   tf2
   pcl_ros
@@ -48,6 +44,8 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 
 find_package(generate_parameter_library REQUIRED)
+find_package(diagnostic_updater REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
 
 #find_package(ament_cmake REQUIRED COMPONENTS ${ROS_CXX_DEPENDENCIES})
 find_package(PCL REQUIRED QUIET)
@@ -74,7 +72,10 @@ generate_parameter_library(laser_scan_matcher_parameters
 #)
 
 #Create library
-add_library(laser_scan_matcher src/laser_scan_matcher.cpp)
+add_library(laser_scan_matcher 
+            src/laser_scan_matcher.cpp
+            src/laser_scan_matcher_diagnostics.cpp
+            )
 
 target_link_libraries(laser_scan_matcher PUBLIC
 laser_scan_matcher_parameters
@@ -94,6 +95,8 @@ ament_target_dependencies( laser_scan_matcher
         sensor_msgs
         geometry_msgs
         nav_msgs
+        diagnostic_updater
+        diagnostic_msgs
         )
 
 #Create nodelet
