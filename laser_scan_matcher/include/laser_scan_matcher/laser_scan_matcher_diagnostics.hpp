@@ -16,6 +16,7 @@ public:
 
   static constexpr double MAIN_LOOP_TIME_MIN = 0.2;   // [s]
   static constexpr double READING_AGE_MIN = 3.0;     // [s]
+  static constexpr double MATCH_DURATION = 30;   // [ms]
 
   explicit LaserScanMatcherDiagnostics(LaserScanMatcher * scanner);
   virtual ~LaserScanMatcherDiagnostics() = default;

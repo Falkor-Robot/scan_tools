@@ -33,8 +33,10 @@ void LaserScanMatcherDiagnostics::diagnostics(diagnostic_updater::DiagnosticStat
   /// Check if the loop period is quick enough
   if (status_->main_loop_time > MAIN_LOOP_TIME_MIN) {
     stat.summary(ERROR, "loop time too long");
-  } else if (status_->match_duration > READING_AGE_MIN) {
+  } else if (status_->reading_age > READING_AGE_MIN) {
     stat.summary(ERROR, "data received is too old");
+  } else if (status_->match_duration > MATCH_DURATION) {
+    stat.summary(WARN, "match duration is slow");
   } else {
     stat.summary(OK, "ok");
   }
