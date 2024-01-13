@@ -518,8 +518,8 @@ void LaserScanMatcher::scanCallback (const sensor_msgs::msg::LaserScan::SharedPt
 void LaserScanMatcher::processScan(LDP& curr_ldp_scan, const rclcpp::Time& time)
 {
   const auto start = std::chrono::system_clock::now();
-  reading_age_ = (time -last_loop_update_).seconds();
-  last_loop_update_ = time;
+  reading_age_ = (rclcpp::Clock().now() -last_loop_update_).seconds();
+  last_loop_update_ = rclcpp::Clock().now();
   // CSM is used in the following way:
   // The scans are always in the laser frame
   // The reference scan (prevLDPcan_) has a pose of [0, 0, 0]
